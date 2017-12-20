@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import os
 
 from keras import backend as K
 from keras.applications import VGG19 as vgg
@@ -10,14 +11,19 @@ from scipy.optimize import fmin_l_bfgs_b
 from scipy.misc import imsave
 import time
 
-import matplotlib.pyplot as plt
-
 
 parser = argparse.ArgumentParser()
+
+# images and directory options
 parser.add_argument('--img_size', '-s', default=256, type=int)
-parser.add_argument('--style_image', default='/Users/jeremiahjohnson/Box Sync/research/papers/art/images/starry.jpg')
-parser.add_argument('--content_image', default='/Users/jeremiahjohnson/Box Sync/research/papers/art/images/ct.JPG')
+parser.add_argument('--style_image', default='./images/starry_night.jpg')
+parser.add_argument('--content_image', default='./images/ct.jpg')
+parser.add_argument('--output_dir', default='./output/')
+
+# model options
 parser.add_argument('--num_iters', '-n', default=20, type=int)
+parser.add_argument('--avg_pool', type=bool, default=False)
+
 args = parser.parse_args()
 
 total_variation_weight = 1e-4
@@ -72,6 +78,12 @@ generated_image = K.placeholder((1, args.img_size, args.img_size, 3))
 input_tensor = K.concatenate([content_image, style_image, generated_image], axis=0)
 
 base_model = vgg(input_tensor=input_tensor, include_top=False, weights='imagenet')
+
+if args.avg_pool:
+# TODO
+    from keras.layers import Input, AveragePooling2D
+    from keras.models import Model
+
 output_dict = dict([(layer.name, layer.output) for layer in base_model.layers])
 
 style_layers = []
@@ -116,7 +128,7 @@ class Evaluator:
         self.grad_values = grad_values
         return self.loss_value
 
-    def grads(self):
+    def grads(self, x):
         assert self.loss_value is not None
         grad_values = np.copy(self.grad_values)
         self.loss_value = None
@@ -131,6 +143,9 @@ iterations = args.num_iters
 x = preprocess_image(args.content_image)
 x = x.flatten()
 
+if not os.path.isdir(args.output_dir):
+    os.mkdir(args.output_dir)
+
 for i in range(iterations):
     print('start of iteration', i)
     start_time = time.time()
@@ -141,8 +156,8 @@ for i in range(iterations):
     print('Current loss value:', min_val)
     img = x.copy().reshape((args.img_size, args.img_size, 3))
     img = deprocess_image(img)
-    fname = 'output' + '_at_iteration_%d.png' % i
-    imsave(fname, img)
+    fname = 'output_at_iteration_%d.png' % i
+    imsave(os.path.join(args.output_dir, fname), img)
     print('Image saved as', fname)
     end_time = time.time()
     print('Iteration %d completed in %ds' % (i, end_time - start_time))
