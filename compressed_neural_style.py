@@ -22,7 +22,7 @@ parser.add_argument('--output_dir', default='./output/')
 
 # model options
 parser.add_argument('--num_iters', '-n', default=20, type=int)
-parser.add_argument('--avg_pool', type=bool, default=False)
+parser.add_argument('--avg_pool', type=bool, default=True)
 
 args = parser.parse_args()
 
@@ -80,9 +80,17 @@ input_tensor = K.concatenate([content_image, style_image, generated_image], axis
 base_model = vgg(input_tensor=input_tensor, include_top=False, weights='imagenet')
 
 if args.avg_pool:
-# TODO
-    from keras.layers import Input, AveragePooling2D
-    from keras.models import Model
+    from keras.layers import AveragePooling2D
+
+    print('replacing max pooling layers with average pooling layers...')
+    for i, layer in enumerate(base_model.layers):
+        if 'pool' in layer.name:
+            base_model.layer = AveragePooling2D(pool_size=(2, 2),
+                                                strides=(2, 2),
+                                                padding='valid')
+
+    base_model.compile(optimizer='adam', loss='categorical_crossentropy')
+
 
 output_dict = dict([(layer.name, layer.output) for layer in base_model.layers])
 
