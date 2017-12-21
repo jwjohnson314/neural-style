@@ -23,12 +23,11 @@ parser.add_argument('--output_dir', default='./output/')
 # model options
 parser.add_argument('--num_iters', '-n', default=20, type=int)
 parser.add_argument('--avg_pool', type=bool, default=True)
+parser.add_argument('--content_weight', default=0.001, type=float)
+parser.add_argument('--style_weight', default=3.0, type=float)
+parser.add_argument('--total_variation_weight', default=1e-3, type=float)
 
 args = parser.parse_args()
-
-total_variation_weight = 1e-4
-style_weight = 1
-content_weight = 0.025
 
 
 def preprocess_image(image_path):
@@ -82,9 +81,9 @@ base_model = vgg(input_tensor=input_tensor, include_top=False, weights='imagenet
 if args.avg_pool:
     from keras.layers import AveragePooling2D
 
-    print('replacing max pooling layers with average pooling layers...')
     for i, layer in enumerate(base_model.layers):
         if 'pool' in layer.name:
+            print('replacing max pooling layer{} with average pooling layers'.format(layer.name))
             base_model.layer = AveragePooling2D(pool_size=(2, 2),
                                                 strides=(2, 2),
                                                 padding='valid')
@@ -104,17 +103,19 @@ loss = K.variable(0.)
 layer_features = output_dict[content_layer]
 content_image_features = layer_features[0, :, :, :]
 generated_image_features = layer_features[2, :, :, :]
-loss += content_weight * content_loss(content_image_features, generated_image_features)
+loss += args.content_weight * content_loss(content_image_features, generated_image_features)
 
 for layer_name in style_layers:
     layer_features = output_dict[layer_name]
     style_reference_features = layer_features[1, :, :, :]
     generated_image_features = layer_features[2, :, :, :]
     sl = style_loss(style_reference_features, generated_image_features)
-    loss += (style_weight / len(style_layers)) * sl
+    loss += (args.style_weight / len(style_layers)) * sl
 
-loss += total_variation_weight * total_variation_loss(generated_image)
+loss += args.total_variation_weight * total_variation_loss(generated_image)
 
+# get rid of base model to save memory
+del base_model
 
 grads = K.gradients(loss, generated_image)[0]
 fetch_loss_and_grads = K.function([generated_image], [loss, grads])
@@ -160,7 +161,7 @@ for i in range(iterations):
     x, min_val, info = fmin_l_bfgs_b(evaluator.loss,
                                      x,
                                      fprime=evaluator.grads,
-                                     maxfun=20)
+                                     maxfun=40)
     print('Current loss value:', min_val)
     img = x.copy().reshape((args.img_size, args.img_size, 3))
     img = deprocess_image(img)
