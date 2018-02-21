@@ -10,8 +10,6 @@ The algorithm combines the content of an image with the styles and textures of a
   <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/cubist_chopin.png" height="223">
 </div>
 
-<br>
-
 <div align="center">
   <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/il_peccato.jpg" height="223px">
   <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/brooklyn_bridge.jpg" height="223px">
@@ -20,7 +18,7 @@ The algorithm combines the content of an image with the styles and textures of a
 
 ## Implementation Differences
 
-* In the paper by Gatys *et. al.*, they note the use of a vgg network with normalized weights. Here, we use non-normalized weights. 
+* In the paper by Gatys *et. al.*, they note the use of a vgg network with normalized weights. Here, we use non-normalized weights. The normalized weights are available in caffe format and a script to download them is included.
 * The Chollet implementation uses max-pooling layers. Here, max-pooling layers are converted by default to average-pooling layers as in the original implementation. 
 
 ## Basic Usage
