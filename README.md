@@ -6,13 +6,13 @@ This is a Keras/Tensorflow implementation of the neural-style algorithm as first
 ## What It Does
 The algorithm combines the content of an image with the styles and textures of another image using features derived from a convolutional neural network. For example:
 <div align="center">
-  <img src="https://github.com/jwjohnson314/neural-style/master/images/cubist_9.jpg" height="223px">
-  <img src="https://github.com/jwjohnson314/neural-style/master/images/chopin.jpg" height="223px">
+  <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/cubist_9.jpg" height="223px">
+  <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/chopin.jpg" height="223px">
   <img src="https://github.com/jwjohnson314/neural-style/master/images/cubist_chopin.jpg" height="710">
 </div>
 
 <div align="center">
-  <img src="https://github.com/jwjohnson314/neural-style/master/images/il_peccato.jpg" height="223px">
+  <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/il_peccato.jpg" height="223px">
   <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/brooklyn_bridge.jpg" height="223px">
   <img src="https://github.com/jwjohnson314/neural-style/master/images/il_brooklyn.jpg" height="710">
 </div>
