@@ -47,4 +47,4 @@ python neural_style.py --style_image=<style_image.jpg> --content_image=<content_
 ## Improving the Quality of the Generated Images
 Fork the repo and try incorporating the results in [this paper!](https://arxiv.org/abs/1611.07865).
 
-Tested on Ubuntu 17.10, Keras 2.1.3, Tensorflow 1.4.0
+Tested on Ubuntu 17.10, Keras 2.1.3, Tensorflow 1.4.0, Cuda 9.0, CuDNN 7.
