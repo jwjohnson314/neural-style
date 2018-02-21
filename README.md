@@ -7,13 +7,13 @@ The algorithm combines the content of an image with the styles and textures of a
 <div align="center">
   <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/cubist_9.jpg" height="223px">
   <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/chopin.jpg" height="223px">
-  <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/cubist_chopin.png" height="223">
+  <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/cubist_chopin.png" height="546">
 </div>
 
 <div align="center">
   <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/il_peccato.jpg" height="223px">
   <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/brooklyn_bridge.jpg" height="223px">
-  <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/il_brooklyn.png" height="223">
+  <img src="https://github.com/jwjohnson314/neural-style/blob/master/images/il_brooklyn.png" height="546">
 </div>
 
 ## Implementation Differences
