@@ -1,6 +1,6 @@
 # Neural-Style
 
-This is a Keras/Tensorflow implementation of the neural-style algorithm from the paper [A Neural Algorithm of Artistic Style](http://arxiv.org/abs/1508.06576) by Gatys *et. al.* Most of the code here isn't original; it largely follows Francois Chollet's implementation as laid out in his book [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python?a_aid=keras&a_bid=76564dff), and in the notebooks that accompany the book [here](https://github.com/fchollet/deep-learning-with-python-notebooks). I wanted a Python-based executable for quick experimentation along the lines of [this Torch implementation](https://github.com/jcjohnson/neural-style); this repo is the result.
+This is a Keras/Tensorflow implementation of the neural-style algorithm from the paper [A Neural Algorithm of Artistic Style](http://arxiv.org/abs/1508.06576) by Gatys *et. al.* The code is based on Francois Chollet's implementation as laid out in his book [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python?a_aid=keras&a_bid=76564dff), and incorporates some modifications from recent work such as [Improving the Neural Algorithm of Artistic Style](https://arxiv.org/pdf/1605.04603.pdf). I wanted a python-based executable for quick experimentation along the lines of [this Torch implementation](https://github.com/jcjohnson/neural-style); this repo is the result.
 
 ## What It Does
 The algorithm combines the content of an image with the styles and textures of another image using features derived from a convolutional neural network. For example:
@@ -18,13 +18,19 @@ The algorithm combines the content of an image with the styles and textures of a
 
 ## Implementation Differences
 
-* In the paper by Gatys *et. al.*, they note the use of a vgg network with normalized weights. Here, we use non-normalized weights. The normalized weights are available in caffe format and a script to download them is included.
-* The Chollet implementation uses max-pooling layers. Here, max-pooling layers are converted by default to average-pooling layers as in the original implementation. 
+* Gatys *et. al.* use a vgg19 network with normalized weights. Here, we use non-normalized weights. The normalized weights are available in caffe format and a script to download them is included, but not used yet.
+* The Chollet implementation uses max-pooling layers. Here, max-pooling layers are converted by default to average-pooling layers. 
 
 ## Basic Usage
 
 ```
 python neural_style.py --style_image=<style_image.jpg> --content_image=<content_image.jpg>
+```
+
+Better results can often be obtained by specifying the same style and content layers (and more of them), as described in [Improving the Neural Algorithm of Artistic Style](https://arxiv.org/pdf/1605.04603.pdf):
+
+```
+python neural_style.py --style_layers block1_conv1 block1_conv2 block2_conv1 block2_conv2 block3_conv1 block3_conv2 block4_conv1 block4_conv2 block5_conv1 block5_conv2 --content_layers block1_conv1 block1_conv2 block2_conv1 block2_conv2 block3_conv1 block3_conv2 block4_conv1 block4_conv2 block5_conv1 block5_conv2 --style_image=<style_image.jpg> --content_image=<content_image.jpg>
 ```
 
 ## Options
@@ -41,6 +47,7 @@ python neural_style.py --style_image=<style_image.jpg> --content_image=<content_
 * --content_weight: weight on content image, default is 0.001
 * --style_weight: weight on style image, default is 3.0
 * --total_variation_weight, default is 0.001
+* --style_layers: layers to use to extract style features. Defaults to blocki_conv1 for i=1,...,5. 
 
 ## Improving the Quality of the Generated Images
 Fork the repo and try incorporating the results in [this paper!](https://arxiv.org/abs/1611.07865).

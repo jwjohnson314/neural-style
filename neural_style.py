@@ -27,6 +27,9 @@ parser.add_argument('--avg_pool', type=bool, default=True)
 parser.add_argument('--content_weight', default=0.001, type=float)
 parser.add_argument('--style_weight', default=3.0, type=float)
 parser.add_argument('--total_variation_weight', default=1e-3, type=float)
+parser.add_argument('--style_layers', nargs='*', default=None)
+parser.add_argument('--content_layers', nargs='*', default=None)
+
 
 args = parser.parse_args()
 
@@ -84,27 +87,47 @@ if args.avg_pool:
 
     for i, layer in enumerate(base_model.layers):
         if 'pool' in layer.name:
-            print('replacing max pooling layer{} with average pooling layers'.format(layer.name))
+            print('replacing max pooling layer {} with average pooling layer'.format(layer.name))
             base_model.layer = AveragePooling2D(pool_size=(2, 2),
                                                 strides=(2, 2),
                                                 padding='valid')
-
+        # TODO: Does not work
+        # if 'conv' in layer.name:
+        #     print('replacing relu activation with selu at layer {}'.format(layer.name))
+        #     base_model.get_layer(layer.name).activation = 'selu'
     base_model.compile(optimizer='adam', loss='categorical_crossentropy')
 
 
 output_dict = dict([(layer.name, layer.output) for layer in base_model.layers])
 
-style_layers = []
-for i in range(1, 6, 1):
-    style_layers.append('block'+str(i)+'_conv1')
 
-content_layer = 'block5_conv2'
+if args.style_layers:
+    style_layers = args.style_layers
+else:
+    style_layers = []
+    for i in range(1, 6, 1):
+        style_layers.append('block'+str(i)+'_conv1')
+
+print('Using style layers {}'.format(style_layers))
+
+if args.content_layers:
+    content_layers = args.content_layers
+else:
+    content_layers = ['block4_conv2']
+
+print('Using content layers {}'.format(content_layers))
 
 loss = K.variable(0.)
-layer_features = output_dict[content_layer]
-content_image_features = layer_features[0, :, :, :]
-generated_image_features = layer_features[2, :, :, :]
-loss += args.content_weight * content_loss(content_image_features, generated_image_features)
+layer_features = [output_dict[layer] for layer in content_layers]
+
+print(layer_features)
+
+# this is not memory efficient
+content_image_features = [layer_features[i][0, :, :, :] for i in range(len(content_layers))]
+generated_image_features = [layer_features[i][2, :, :, :] for i in range(len(content_layers))]
+
+for i in range(len(content_layers)):
+    loss += (args.content_weight / len(content_layers)) * content_loss(content_image_features[i], generated_image_features[i])
 
 for layer_name in style_layers:
     layer_features = output_dict[layer_name]
