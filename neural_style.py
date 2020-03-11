@@ -2,10 +2,10 @@ import argparse
 import numpy as np
 import os
 
-from keras import backend as K
-from keras.applications import VGG19 as vgg
-from keras.applications.vgg19 import preprocess_input
-from keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras import backend as K
+from tensorflow.keras.applications import VGG19 as vgg
+from tensorflow.keras.applications.vgg19 import preprocess_input
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
 from scipy.optimize import fmin_l_bfgs_b
 from scipy.misc import imsave
@@ -83,7 +83,7 @@ input_tensor = K.concatenate([content_image, style_image, generated_image], axis
 base_model = vgg(input_tensor=input_tensor, include_top=False, weights='imagenet')
 
 if args.avg_pool:
-    from keras.layers import AveragePooling2D
+    from tensorflow.keras.layers import AveragePooling2D
 
     for i, layer in enumerate(base_model.layers):
         if 'pool' in layer.name:
