@@ -48,6 +48,7 @@ python neural_style.py --style_layers block1_conv1 block1_conv2 block2_conv1 blo
 * --style_weight: weight on style image, default is 3.0
 * --total_variation_weight, default is 0.001
 * --style_layers: layers to use to extract style features. Defaults to blocki_conv1 for i=1,...,5. 
+* --content_layers: layers to use to extract content features. Defaults to block4_conv2.
 
 ## Improving the Quality of the Generated Images
 Fork the repo and try incorporating the results in [this paper!](https://arxiv.org/abs/1611.07865).
